@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CheckTamanhoCEP</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR(
+    NOT(
+         REGEX(CEP__c ,&quot;^[0-9]*$&quot;))
+    ,NOT(
+         LEN(CEP__c)=8
+        )
+)</errorConditionFormula>
+    <errorMessage>Campo CEP deve ser númerico, sem caracteres especiais e deve ter tamanho 8.</errorMessage>
+</ValidationRule>
