@@ -1,4 +1,4 @@
-trigger AccountTrigger on Account (before insert) {
+trigger AccountTrigger on Account (after insert) {
 
     if(trigger.isInsert){
         if(trigger.isAfter){
