@@ -80,6 +80,12 @@ public without sharing class AccountTriggerHandler {
                 }
             }
 
+
+            // Make sure we can update the database before even trying
+            if (!Schema.sObjectType.Account.fields.Vendedor__c.isUpdateable()) {
+                return null;
+            }
+
             update accountsToUpdate;
 
         }
