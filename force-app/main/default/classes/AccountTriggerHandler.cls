@@ -5,7 +5,7 @@ public without sharing class AccountTriggerHandler {
         setVendedor(newAccounts);
     }
 
-    private static Set<String> setRecordTypes(Account [] newAccounts){
+    public static Set<String> setRecordTypes(Account [] newAccounts){
         
         Set<String> recordTypeVendedor = new Set<String>();
 
@@ -30,7 +30,7 @@ public without sharing class AccountTriggerHandler {
 
     }
     
-    private static void setVendedor(Account [] newAccounts){
+    public static void setVendedor(Account [] newAccounts){
         try{
             
             List<Account> accountsToUpdate = new List<Account>();
@@ -65,7 +65,7 @@ public without sharing class AccountTriggerHandler {
                 
                     Id vendedor = getVendedorComMenosConta(mapVendedoresQuantidades.get(tipoRegistro));
 
-                    newAccount.Vendedor__c = vendedor;
+                    newAccount.Vendedor__c = string.valueOf(vendedor);
                     
                     if(newAccount.Vendedor__c != null){
                         accountsToUpdate.add(newAccount);
@@ -94,7 +94,7 @@ public without sharing class AccountTriggerHandler {
         }
     }
     
-    private static Map<Id,Integer> getVendedor(String recordType){
+    public static Map<Id,Integer> getVendedor(String recordType){
         
        
         Map<Id,Integer> mapVendedor = new  Map<Id,Integer>();
@@ -120,12 +120,12 @@ public without sharing class AccountTriggerHandler {
 
     public static Id getVendedorComMenosConta(Map<Id,Integer> vendedores){
 
-        Id vendedorComMenosConta = '';
+        Id vendedorComMenosConta ;
 
         Integer menorQuantidadeAtual =  0;
         for(Id vendedor : vendedores.keySet()){
 
-            if((vendedores.get(vendedor) < menorQuantidadeAtual) || (vendedorComMenosConta == '')){
+            if((vendedores.get(vendedor) < menorQuantidadeAtual) || (vendedorComMenosConta == null)){
                 menorQuantidadeAtual = vendedores.get(vendedor);
                 vendedorComMenosConta = string.valueOf(vendedor);
             }
