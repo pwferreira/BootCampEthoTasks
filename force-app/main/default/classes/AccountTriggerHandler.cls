@@ -1,6 +1,6 @@
 public without sharing class AccountTriggerHandler {
     
-    public static void isAfterInsert(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
+    public static void isBeforeInsert(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
         
         setVendedor(newAccounts);
     }
@@ -66,11 +66,7 @@ public without sharing class AccountTriggerHandler {
                     Id vendedor = getVendedorComMenosConta(mapVendedoresQuantidades.get(tipoRegistro));
 
                     newAccount.Vendedor__c = string.valueOf(vendedor);
-                    
-                    if(newAccount.Vendedor__c != null){
-                        accountsToUpdate.add(newAccount);
-                    }
-
+                
                     Integer quantidade = mapVendedoresQuantidades.get(tipoRegistro).get(vendedor);
                     quantidade++;
 
@@ -79,13 +75,6 @@ public without sharing class AccountTriggerHandler {
                     mapVendedoresQuantidades.put(tipoRegistro,putNewMap);
                 }
             }
-
-
-            // Make sure we can update the database before even trying
-            if (Schema.sObjectType.Account.fields.Vendedor__c.isUpdateable()) {
-                update accountsToUpdate;
-            }
-
 
         }
         catch(Exception e)
