@@ -5,6 +5,15 @@ public without sharing class AccountTriggerHandler {
         setVendedor(newAccounts);
     }
 
+    public static void isAfterInsert(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
+    }
+
+    //public static void isBeforeUpdate(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
+    //}
+
+    public static void isAfterUpdate(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
+    }
+
     public static Set<String> setRecordTypes(Account [] newAccounts){
         
         Set<String> recordTypeVendedor = new Set<String>();
@@ -106,7 +115,6 @@ public without sharing class AccountTriggerHandler {
         return mapVendedor;
         
     }
-
     public static Id getVendedorComMenosConta(Map<Id,Integer> vendedores){
 
         Id vendedorComMenosConta ;
@@ -123,6 +131,28 @@ public without sharing class AccountTriggerHandler {
 	
         return vendedorComMenosConta;
 
+    }
+
+    public static void UpdateAddressQueueAble(Account[] newAccounts){
+        try{
+
+            Map<string,List<Account>> filas = new Map<string,List<Account>>();
+
+            Integer currentCount = 0;
+
+            for(Account acc : newAccounts){
+                
+            }
+            
+         
+
+
+
+
+            
+        } catch (Exception exc) {
+            System.debug('Ocorreu um erro ao atualizar endereço' + exc.getMessage() + exc.getStackTraceString());
+        }
     }
     
     
