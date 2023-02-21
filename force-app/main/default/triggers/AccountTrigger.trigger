@@ -11,6 +11,7 @@ trigger AccountTrigger on Account (before insert) {
 
     if(trigger.isUpdate){
         if(trigger.isAfter){
+            AccountTriggerHandler.isAfterUpdate(trigger.new,trigger.newMap,trigger.oldMap);
         }
     }
 }

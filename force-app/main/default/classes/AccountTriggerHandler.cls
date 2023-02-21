@@ -6,12 +6,14 @@ public without sharing class AccountTriggerHandler {
     }
     
     public static void isAfterInsert(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
+        updateAddress(newAccounts);
     }
     
     //public static void isBeforeUpdate(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
     //}
     
     public static void isAfterUpdate(Account [] newAccounts, Map<Id,Account> newAccountsMap,Map<Id,Account> oldAccountsMap ){
+        updateAddress(newAccounts);
     }
     
     public static Set<String> setRecordTypes(Account [] newAccounts){
@@ -132,15 +134,62 @@ public without sharing class AccountTriggerHandler {
         return vendedorComMenosConta;
         
     }
+
+    public static void updateAddress(Account[] newAccounts){
+
+        List<Account> accountsToUpdate = new List<Account>();
+
+        for(Account newAccount : newAccounts){
+
+            if((newAccount.EnderecoCompletoSemNumero__c == null) && (newAccount.CEP__c != null)){
+                accountsToUpdate.add(newAccount);
+            }
+
+            List<AccountGetAddressConfig__mdt> mcs = AccountGetAddressConfig__mdt.getAll().values();
+
+            if(mcs.size() > 0){
+
+                if(mcs[0].BuscaCepViaTrigger__c){
+                    updateAddressQueueAble(accountsToUpdate);
+                }
+    
+                if(mcs[0].BuscaCepViaScheduledApex__c){
+                    updateAdressSchedulable(accountsToUpdate);
+                }
+
+            }
+
+        }
+
+    }
+
+    public static void updateAdressSchedulable(Account[] newAccounts){
+        try {
+
+            Map<Integer,List<Account>> scheduleList = splitList(newAccounts, 100);
+            
+            for(Integer currentSchedule : scheduleList.keySet()){
+                
+
+                UpdateAccountAddressSchedulable accountAddresScheduleable = new UpdateAccountAddressSchedulable(scheduleList.get(currentSchedule));
+
+                String sch = '20 30 8 10 2 ?';
+                ID jobId = System.schedule('Update Account Address', sch, accountAddresScheduleable);
+            }
+            
+        } catch (Exception exc) {
+            System.debug('Ocorreu um erro ao atualizar endereço' + exc.getMessage() + exc.getStackTraceString());
+        }
+    }
     
     public static void updateAddressQueueAble(Account[] newAccounts){
         try{
             
-            Map<Integer,List<Account>> queueLists = splitList(newAccounts, 50);
+            Map<Integer,List<Account>> queueList = splitList(newAccounts, 50);
             
-            for(Integer currentQueue : queueLists.keySet()){
+            for(Integer currentQueue : queueList.keySet()){
                 
-                ID jobId = System.enqueueJob(new UpdateAccountAddressQueueable(queueLists.get(currentQueue)));
+                ID jobId = System.enqueueJob(new UpdateAccountAddressQueueable(queueList.get(currentQueue)));
             }
             
         } catch (Exception exc) {

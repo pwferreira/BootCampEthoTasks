@@ -1,13 +1,13 @@
-public with sharing class UpdateAccountAddressQueueable implements Queueable{
-    
+public with sharing class UpdateAccountAddressSchedulable implements Schedulable{
+
     private List<Account> accounts;
-    
-    public UpdateAccountAddressQueueable(List<Account> newAccounts) {
+
+    public UpdateAccountAddressSchedulable(List<Account> newAccounts) {
         accounts = newAccounts;
     }
-    
-    public void execute(QueueableContext context) {
-        
+
+    public void execute(SchedulableContext ctx) {
+
         List<Account> accountsToUpdate = new List<Account>();
         
         for (Account account : accounts){
@@ -36,5 +36,4 @@ public with sharing class UpdateAccountAddressQueueable implements Queueable{
 
         update accounts;
     }
-    
 }
