@@ -44,4 +44,28 @@ public with sharing class TestAccountTrigger {
 
     }
 
+    @isTest
+    public static void testInsertPrataAccount(){
+        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Prata');
+
+        List<Vendedor__c> vendedores = new List<Vendedor__c>();
+
+        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Externo'));
+        
+        Test.startTest();
+        insert vendedores;
+        insert accountsToInsert;
+
+        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c FROM Account WHERE QualificacaoCliente__c = 'Prata'];
+        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C ];
+
+        Test.stopTest();
+
+        System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
+        
+
+    }
+
+    
+
 }

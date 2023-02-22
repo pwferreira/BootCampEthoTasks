@@ -108,8 +108,6 @@ public without sharing class AccountTriggerHandler {
             vendedores =  [SELECT Id, (SELECT Id FROM Accounts__r) FROM Vendedor__c WHERE RecordType.DeveloperName = :recordType WITH SECURITY_ENFORCED];
         }
         
-        
-        
         for(Vendedor__c vendedor : vendedores){           
             mapVendedor.put(vendedor.Id,vendedor.Accounts__r.size());
         }
@@ -144,19 +142,22 @@ public without sharing class AccountTriggerHandler {
             if((newAccount.EnderecoCompletoSemNumero__c == null) && (newAccount.CEP__c != null)){
                 accountsToUpdate.add(newAccount);
             }
+        }
 
-            List<AccountGetAddressConfig__mdt> mcs = AccountGetAddressConfig__mdt.getAll().values();
+        if(accountsToUpdate.size() == 0){
+            return;
+        }
 
-            if(mcs.size() > 0){
+        List<AccountGetAddressConfig__mdt> mcs = AccountGetAddressConfig__mdt.getAll().values();
 
-                if(mcs[0].BuscaCepViaTrigger__c){
-                    updateAddressQueueAble(accountsToUpdate);
-                }
-    
-                if(mcs[0].BuscaCepViaScheduledApex__c){
-                    updateAdressSchedulable(accountsToUpdate);
-                }
+        if(mcs.size() > 0){
 
+            if(mcs[0].BuscaCepViaTrigger__c){
+                updateAddressQueueAble(accountsToUpdate);
+            }
+
+            if(mcs[0].BuscaCepViaScheduledApex__c){
+                updateAdressSchedulable(accountsToUpdate);
             }
 
         }
