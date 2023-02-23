@@ -3,7 +3,7 @@ public with sharing class ViaCepCallout {
     
         Http http = new Http();
         HttpRequest request = new HttpRequest();
-        request.setEndpoint('viacep.com.br/ws/' + 01001000 + '/json/');
+        request.setEndpoint('https://viacep.com.br/ws/' + cep + '/json/');
         request.setMethod('GET');
         HttpResponse response = http.send(request);
         
