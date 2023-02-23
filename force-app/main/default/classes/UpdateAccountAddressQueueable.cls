@@ -1,4 +1,4 @@
-public with sharing class UpdateAccountAddressQueueable implements Queueable{
+public with sharing class UpdateAccountAddressQueueable implements Queueable, Database.AllowsCallouts {
     
     private List<Account> accounts;
     
@@ -34,7 +34,7 @@ public with sharing class UpdateAccountAddressQueueable implements Queueable{
             return ;
         }
 
-        update accounts;
+        update accountsToUpdate;
     }
     
 }
