@@ -135,9 +135,15 @@ public without sharing class AccountTriggerHandler {
 
     public static void updateAddress(Account[] newAccounts){
 
+        String updateVia = getConfig();
+
+        if(String.isBlank(updateVia)){
+            return;
+        }
+
         List<Account> accountsToUpdate = new List<Account>();
 
-        for(Account newAccount : [SELECT ID,EnderecoCompletoSemNumero__c,CEP__c FROM Account WHERE Id IN : newAccounts]){
+        for(Account newAccount : [SELECT ID,EnderecoCompletoSemNumero__c,CEP__c FROM Account WHERE Id IN : newAccounts WITH SECURITY_ENFORCED]){
 
             if((newAccount.EnderecoCompletoSemNumero__c == null) && (newAccount.CEP__c != null)){
                 accountsToUpdate.add(newAccount);
@@ -148,18 +154,11 @@ public without sharing class AccountTriggerHandler {
             return;
         }
 
-        List<AccountGetAddressConfig__mdt> mcs = AccountGetAddressConfig__mdt.getAll().values();
-
-        if(mcs.size() > 0){
-
-            if(mcs[0].BuscaCepViaTrigger__c){
-                updateAddressQueueAble(accountsToUpdate);
-            }
-
-            if(mcs[0].BuscaCepViaScheduledApex__c){
-                updateAdressSchedulable(accountsToUpdate);
-            }
-
+        if(updateVia == 'BuscaCepViaTrigger__c'){
+            updateAddressQueueAble(accountsToUpdate);
+        }
+        else{
+            updateAdressSchedulable(accountsToUpdate);
         }
 
     }
@@ -230,6 +229,22 @@ public without sharing class AccountTriggerHandler {
         
         return mapToReturn;
         
+    }
+
+    public static String getConfig(){
+
+        String result;
+
+        AccountGetAddressConfig__mdt[] mcs = [SELECT QualifiedApiName, BuscaCepViaTrigger__c,   BuscaCepViaScheduledApex__c
+                                              FROM AccountGetAddressConfig__mdt     
+                                              WHERE TestConfig__c = :GetAddressConfigTest.testConfig WITH SECURITY_ENFORCED];
+        
+        if(mcs.size() == 0){
+            return result;
+        }
+
+        return mcs[0].BuscaCepViaTrigger__c ? 'BuscaCepViaTrigger__c' : (mcs[0].BuscaCepViaScheduledApex__c ? 'BuscaCepViaScheduledApex__c' : '');
+
     }
     
     
