@@ -9,6 +9,7 @@ public with sharing class TestAccountTrigger {
         vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Interno'));
         
         Test.startTest();
+        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
         insert vendedores;
         insert accountsToInsert;
 
@@ -31,6 +32,7 @@ public with sharing class TestAccountTrigger {
         vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Externo'));
         
         Test.startTest();
+        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
         insert vendedores;
         insert accountsToInsert;
 
@@ -53,6 +55,7 @@ public with sharing class TestAccountTrigger {
         vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Externo'));
         
         Test.startTest();
+        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
         insert vendedores;
         insert accountsToInsert;
 
