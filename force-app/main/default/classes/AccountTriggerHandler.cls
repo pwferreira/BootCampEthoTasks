@@ -137,7 +137,7 @@ public without sharing class AccountTriggerHandler {
 
         List<Account> accountsToUpdate = new List<Account>();
 
-        for(Account newAccount : newAccounts){
+        for(Account newAccount : [SELECT ID,EnderecoCompletoSemNumero__c,CEP__c FROM Account WHERE Id IN : newAccounts]){
 
             if((newAccount.EnderecoCompletoSemNumero__c == null) && (newAccount.CEP__c != null)){
                 accountsToUpdate.add(newAccount);
