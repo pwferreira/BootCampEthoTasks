@@ -5,7 +5,7 @@ private class ViaCepCalloutTest {
 
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
 
-        HttpResponse response = ViaCepCallout.makeGetCallout('13801035');
+        HttpResponse response = ViaCepCallout.getAddress('13801035');
         // Verify that the response received contains fake values
         String contentType = response.getHeader('Content-Type');
         System.assertEquals('application/json',contentType,'Content-Type in response is Wrong');

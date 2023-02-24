@@ -11,11 +11,7 @@ public with sharing class ViaCepCallout {
 
         for(Account account : [SELECT Id, Cep__c FROM Account WHERE Id in : accountList WITH SECURITY_ENFORCED]){
 
-            Http http = new Http();
-            HttpRequest request = new HttpRequest();
-            request.setEndpoint('https://viacep.com.br/ws/' + account.Cep__c + '/json/');
-            request.setMethod('GET');
-            HttpResponse response = http.send(request);
+           HttpResponse response = getAddress(account.Cep__c);
     
             // If the request is successful, parse the JSON response.
             if(response.getStatusCode() == 200) {
@@ -43,6 +39,17 @@ public with sharing class ViaCepCallout {
         if(accountsToUpdate.size() > 0 ){
             update accountsToUpdate;
         }
+
+    }
+
+    public static HttpResponse getAddress(String cep){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://viacep.com.br/ws/' + cep + '/json/');
+        request.setMethod('GET');
+        HttpResponse response = http.send(request);
+
+        return response;
 
     }
 }
