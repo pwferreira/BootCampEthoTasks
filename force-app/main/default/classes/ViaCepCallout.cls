@@ -14,7 +14,7 @@ public with sharing class ViaCepCallout {
 
 
     @future(callout=true)
-    public static void updateAccountAddress(String accountsString){
+    public static void updateAccountAddressCallout(String accountsString){
         List<Account> accountList = (List<Account>) JSON.deserialize(accountsString, List<Account>.class);
         List<Account> accountsToUpdate = new List<Account>();
 

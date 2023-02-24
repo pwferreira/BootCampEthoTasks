@@ -7,6 +7,6 @@ public with sharing class UpdateAccountAddressQueueable implements Queueable{
     }
     
     public void execute(QueueableContext context) {
-        ViaCepCallout.makeGetCallout(JSON.serialize(accounts));
+        ViaCepCallout.updateAccountAddressCallout(JSON.serialize(accounts));
     }
 }
