@@ -163,6 +163,7 @@ public without sharing class AccountTriggerHandler {
 
     }
 
+    //Schedulable
     public static void updateAdressSchedulable(Account[] newAccounts){
         try {
 
@@ -172,8 +173,9 @@ public without sharing class AccountTriggerHandler {
                 
 
                 UpdateAccountAddressSchedulable accountAddresScheduleable = new UpdateAccountAddressSchedulable(scheduleList.get(currentSchedule));
-
-                String sch = '20 30 8 10 2 ?';
+                
+                //Seconds Minutes Hours Day_of_month Month Day_of_week Optional_year
+                String sch = '0 0 23 ? 2 ?';
                 ID jobId = System.schedule('Update Account Address', sch, accountAddresScheduleable);
             }
             
@@ -182,6 +184,7 @@ public without sharing class AccountTriggerHandler {
         }
     }
     
+    //QueueAble
     public static void updateAddressQueueAble(Account[] newAccounts){
         try{
             
