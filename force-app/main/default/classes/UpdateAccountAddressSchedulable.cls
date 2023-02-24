@@ -8,7 +8,7 @@ public with sharing class UpdateAccountAddressSchedulable implements Schedulable
     
     public void execute(SchedulableContext ctx) {
 
-        ViaCepCallout.updateAccountAddressCallout(JSON.serialize(accounts));
+        ViaCepCallout.updateAccountAddressCalloutAsync(JSON.serialize(accounts));
        
     }
 }
