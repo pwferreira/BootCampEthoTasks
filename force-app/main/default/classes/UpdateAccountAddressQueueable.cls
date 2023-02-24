@@ -24,6 +24,8 @@ public with sharing class UpdateAccountAddressQueueable implements Queueable, Da
                     (String) result.get('bairro') + ' ' +
                     (String) result.get('localidade') + ' ' +
                     (String) result.get('uf');
+
+                account.EnderecoEstado__c = (String) result.get('uf');
                    
                 accountsToUpdate.add(account);
                 
