@@ -175,7 +175,8 @@ public without sharing class AccountTriggerHandler {
                 UpdateAccountAddressSchedulable accountAddresScheduleable = new UpdateAccountAddressSchedulable(scheduleList.get(currentSchedule));
                 
                 //Seconds Minutes Hours Day_of_month Month Day_of_week Optional_year
-                String sch = '0 0 23 ? 2 ?';
+                String sch = '0 0 0 24 2 ? 2023';
+                
                 ID jobId = System.schedule('Update Account Address', sch, accountAddresScheduleable);
             }
             
@@ -242,11 +243,11 @@ public without sharing class AccountTriggerHandler {
                                               FROM AccountGetAddressConfig__mdt     
                                               WHERE TestConfig__c = :GetAddressConfigTest.testConfig WITH SECURITY_ENFORCED];
         
-        if(mcs.size() == 0){
-            return result;
+        if(mcs.size() > 0){
+            result = mcs[0].BuscaCepViaTrigger__c ? 'BuscaCepViaTrigger__c' : (mcs[0].BuscaCepViaScheduledApex__c ? 'BuscaCepViaScheduledApex__c' : '');
         }
 
-        return mcs[0].BuscaCepViaTrigger__c ? 'BuscaCepViaTrigger__c' : (mcs[0].BuscaCepViaScheduledApex__c ? 'BuscaCepViaScheduledApex__c' : '');
+        return result;
 
     }
     
