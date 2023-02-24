@@ -157,7 +157,8 @@ public without sharing class AccountTriggerHandler {
         if(updateVia == 'BuscaCepViaTrigger__c'){
             updateAddressQueueAble(accountsToUpdate);
         }
-        else{
+        
+        if(updateVia == 'BuscaCepViaScheduledApex__c'){       
             updateAdressSchedulable(accountsToUpdate);
         }
 
