@@ -1,27 +1,22 @@
 public with sharing class ViaCepCallout {
 
-    
-    public static HttpResponse makeGetCallout(String cep){
-        Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://viacep.com.br/ws/' + account.Cep__c + '/json/');
-        request.setMethod('GET');
-        HttpResponse response = http.send(request);
-
-        return response;
-        
-    }
-
-
     @future(callout=true)
+    public static void updateAccountAddressCalloutAsync(String accountsString){
+        updateAccountAddressCallout(accountsString);
+    }
+    
     public static void updateAccountAddressCallout(String accountsString){
         List<Account> accountList = (List<Account>) JSON.deserialize(accountsString, List<Account>.class);
         List<Account> accountsToUpdate = new List<Account>();
 
         for(Account account : [SELECT Id, Cep__c FROM Account WHERE Id in : accountList WITH SECURITY_ENFORCED]){
 
-            HttpResponse response = makeGetCallout(account.Cep__c);
-
+            Http http = new Http();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint('https://viacep.com.br/ws/' + account.Cep__c + '/json/');
+            request.setMethod('GET');
+            HttpResponse response = http.send(request);
+    
             // If the request is successful, parse the JSON response.
             if(response.getStatusCode() == 200) {
             
@@ -41,11 +36,13 @@ public with sharing class ViaCepCallout {
 
         }
 
-        if (!Schema.sObjectType.Account.fields.EnderecoCompletoSemNumero__c.isUpdateable() ||!Schema.sObjectType.Account.fields.EnderecoEstado__c.isUpdateable())  {
+        if ((!Schema.sObjectType.Account.fields.EnderecoCompletoSemNumero__c.isUpdateable()) || (!Schema.sObjectType.Account.fields.EnderecoEstado__c.isUpdateable()))  {
             return ;
         }
 
-        update accountsToUpdate;
+        if(accountsToUpdate.size() > 0 ){
+            update accountsToUpdate;
+        }
 
     }
 }
