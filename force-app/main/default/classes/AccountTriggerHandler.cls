@@ -33,9 +33,6 @@ public without sharing class AccountTriggerHandler {
             if(newAcccount.QualificacaoCliente__c == 'Bronze' ){
                 recordTypeVendedor.add('Externo');
             }
-            
-            
-            
         }
         return recordTypeVendedor;
         
@@ -43,8 +40,6 @@ public without sharing class AccountTriggerHandler {
     
     public static void setVendedor(Account [] newAccounts){
         try{
-            
-            List<Account> accountsToUpdate = new List<Account>();
             
             Set<String> recordTypeVendedor = setRecordTypes(newAccounts);
             
