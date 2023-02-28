@@ -170,10 +170,12 @@ public without sharing class AccountTriggerHandler {
 
                 UpdateAccountAddressSchedulable accountAddresScheduleable = new UpdateAccountAddressSchedulable(scheduleList.get(currentSchedule));
                 
+                Date schDate = date.today().addDays(1);
+
                 //Seconds Minutes Hours Day_of_month Month Day_of_week Optional_year
-                String sch = '0 0 0 25 2 ? 2023';
+                String sch = '0 0 0 ' + string.valueOf(schDate.day()) + ' ' + string.valueOf(schDate.month()) + ' ' +  '? ' + string.valueOf(schDate.year());
                 
-                ID jobId = System.schedule('Update Account Address', sch, accountAddresScheduleable);
+                ID jobId = System.schedule('Update Account Address' + string.valueOf(schDate), sch, accountAddresScheduleable);
             }
             
         } catch (Exception exc) {
