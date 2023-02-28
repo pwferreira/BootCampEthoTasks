@@ -10,18 +10,21 @@ public with sharing class TestAccountTrigger {
 
         GetAddressConfigTest.testConfig = 'QueueAble';
         
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
         insert vendedores;
         insert accountsToInsert;
 
         Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
         Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C WHERE RecordTypeId = '012Dn000000Zxc0IAC'];
-
+        
+        ViaCepCallout.updateAccountAddressCalloutAsync(JSON.serialize(assertAccount));
         Test.stopTest();
+        assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
 
         System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
         System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
+     
         
 
     }
@@ -36,8 +39,8 @@ public with sharing class TestAccountTrigger {
 
         GetAddressConfigTest.testConfig = 'QueueAble';
         
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
         insert vendedores;
         insert accountsToInsert;
 
@@ -61,8 +64,8 @@ public with sharing class TestAccountTrigger {
 
         GetAddressConfigTest.testConfig = 'QueueAble';
         
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
         insert vendedores;
         insert accountsToInsert;
 
@@ -86,8 +89,8 @@ public with sharing class TestAccountTrigger {
 
         GetAddressConfigTest.testConfig = 'Schedulable';
         
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
         insert vendedores;
         insert accountsToInsert;
 
@@ -112,8 +115,8 @@ public with sharing class TestAccountTrigger {
 
         GetAddressConfigTest.testConfig = 'QueueAble';
         
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
         insert vendedores;
         insert accountsToInsert;
 
@@ -138,8 +141,8 @@ public with sharing class TestAccountTrigger {
 
         GetAddressConfigTest.testConfig = 'Schedulable';
         
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
         insert vendedores;
         insert accountsToInsert;
 
