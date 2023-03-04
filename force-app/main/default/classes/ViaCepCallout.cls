@@ -1,17 +1,25 @@
 public with sharing class ViaCepCallout {
 
-    @future(callout=true)
-    public static void updateAccountAddressCalloutAsync(String accountsString){
-        updateAccountAddressCallout(accountsString);
+    public static HttpResponse getAddress(String cep){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://viacep.com.br/ws/' + cep + '/json/');
+        request.setMethod('GET');
+        HttpResponse response = http.send(request);
+
+        return response;
+
     }
-    
-    public static void updateAccountAddressCallout(String accountsString){
-        List<Account> accountList = (List<Account>) JSON.deserialize(accountsString, List<Account>.class);
+
+    @future(callout=true)
+    public static void updateAccountAddresFuture(String accountsString){
+
+        List<Account> accounts = (List<Account>) JSON.deserialize(accountsString, List<Account>.class);
         List<Account> accountsToUpdate = new List<Account>();
 
-        for(Account account : [SELECT Id, Cep__c FROM Account WHERE Id in : accountList WITH SECURITY_ENFORCED]){
+        for(Account account : [SELECT Id, Cep__c FROM Account WHERE Id in : accounts WITH SECURITY_ENFORCED]){
 
-           HttpResponse response = getAddress(account.Cep__c);
+           HttpResponse response =  getAddress(account.Cep__c);
     
             // If the request is successful, parse the JSON response.
             if(response.getStatusCode() == 200) {
@@ -39,17 +47,5 @@ public with sharing class ViaCepCallout {
         if(accountsToUpdate.size() > 0 ){
             update accountsToUpdate;
         }
-
-    }
-
-    public static HttpResponse getAddress(String cep){
-        Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://viacep.com.br/ws/' + cep + '/json/');
-        request.setMethod('GET');
-        HttpResponse response = http.send(request);
-
-        return response;
-
     }
 }

@@ -1,7 +1,7 @@
 @isTest
 public with sharing class TestAccountTrigger {
     @isTest
-    public static void testInsertOuroAccount(){
+    public static void testSetVendedorContaOuro(){
         List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Ouro');
 
         List<Vendedor__c> vendedores = new List<Vendedor__c>();
@@ -17,20 +17,15 @@ public with sharing class TestAccountTrigger {
 
         Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
         Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C WHERE RecordTypeId = '012Dn000000Zxc0IAC'];
-        
-        ViaCepCallout.updateAccountAddressCalloutAsync(JSON.serialize(assertAccount));
+                
         Test.stopTest();
-        assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
-
-        System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
-        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
-     
         
-
+        System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
+     
     }
 
     @isTest
-    public static void testInsertBronzeAccount(){
+    public static void testSetVendedorContaBronze(){
         List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Bronze');
 
         List<Vendedor__c> vendedores = new List<Vendedor__c>();
@@ -50,12 +45,11 @@ public with sharing class TestAccountTrigger {
         Test.stopTest();
 
         System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
-        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
 
     }
 
     @isTest
-    public static void testInsertPrataAccount(){
+    public static void testSetVendedorContaPrata(){
         List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Prata');
 
         List<Vendedor__c> vendedores = new List<Vendedor__c>();
@@ -75,17 +69,63 @@ public with sharing class TestAccountTrigger {
         Test.stopTest();
 
         System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
-        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
 
     }
 
     @isTest
-    public static void testInsertPrataAccountSchedulable(){
-        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Prata');
+    public static void testSetVendedorContaOuroBulk(){
+        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(60,'Ouro');
 
         List<Vendedor__c> vendedores = new List<Vendedor__c>();
 
-        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Externo'));
+        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Interno'));
+
+        GetAddressConfigTest.testConfig = 'QueueAble';
+        
+        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
+        insert vendedores;
+        insert accountsToInsert;
+
+        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro' AND Vendedor__c != NULL];
+        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C WHERE RecordTypeId = '012Dn000000Zxc0IAC'];
+                
+        Test.stopTest();
+        
+        System.assertEquals(60, assertAccount.size(),'Alguma Conta não teve vendedor definido');
+     
+    }
+
+    @isTest
+    public static void testUpdateAddresQueueAble(){
+        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Ouro');
+
+        List<Vendedor__c> vendedores = new List<Vendedor__c>();
+
+        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Interno'));
+
+        GetAddressConfigTest.testConfig = 'QueueAble';
+        
+        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
+        Test.startTest();
+        insert vendedores;
+        insert accountsToInsert;
+
+        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C WHERE RecordTypeId = '012Dn000000Zxc0IAC'];
+        
+        Test.stopTest();
+        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
+                
+        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
+    }
+
+    @isTest
+    public static void testUpdateAddresSchedulable(){
+        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(1,'Ouro');
+
+        List<Vendedor__c> vendedores = new List<Vendedor__c>();
+
+        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Interno'));
 
         GetAddressConfigTest.testConfig = 'Schedulable';
         
@@ -94,65 +134,14 @@ public with sharing class TestAccountTrigger {
         insert vendedores;
         insert accountsToInsert;
 
-        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Prata'];
-        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C ];
+        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C WHERE RecordTypeId = '012Dn000000Zxc0IAC'];
+        
+        ViaCepCallout.updateAccountAddresFuture(JSON.serialize(accountsToInsert));
 
         Test.stopTest();
-
-        System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
+        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
+                
         System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
-
     }
     
-
-    @isTest
-    public static void testInsertPrataAccountBulk(){
-        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(60,'Prata');
-
-        List<Vendedor__c> vendedores = new List<Vendedor__c>();
-
-        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Externo'));
-
-        GetAddressConfigTest.testConfig = 'QueueAble';
-        
-        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
-        Test.startTest();
-        insert vendedores;
-        insert accountsToInsert;
-
-        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Prata'];
-        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C ];
-
-        Test.stopTest();
-
-        System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
-        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
-
-    }
-
-
-    @isTest
-    public static void testInsertPrataAccountSchedulableBulk(){
-        List<Account> accountsToInsert =  AccountDataFactory.createAccounts(110,'Prata');
-
-        List<Vendedor__c> vendedores = new List<Vendedor__c>();
-
-        vendedores.addAll(VendedorDataFactory.criarVendedores(1,'Externo'));
-
-        GetAddressConfigTest.testConfig = 'Schedulable';
-        
-        Test.setMock(HttpCalloutMock.class, new ViaCepHttpCalloutMock());
-        Test.startTest();
-        insert vendedores;
-        insert accountsToInsert;
-
-        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Prata'];
-        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C ];
-
-        Test.stopTest();
-
-        System.assertEquals(vendedor[0].Id, assertAccount[0].Vendedor__c,'Vendedor da Conta não foi atualizada');
-        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
-
-    }
 }
