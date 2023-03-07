@@ -7,7 +7,12 @@ public with sharing class UpdateAccountAddressSchedulable implements Schedulable
     }
     
     public void execute(SchedulableContext ctx) {
-        ViaCepCallout.updateAccountAddresFuture(JSON.serialize(accounts));
+        Map<Integer,List<Account>> queueList = Utilities.splitList(accounts, 50);
+            
+        for(Integer currentQueue : queueList.keySet()){
+            
+            ID jobId = System.enqueueJob(new UpdateAccountAddressQueueable(queueList.get(currentQueue)));
+        }
     }
     
    

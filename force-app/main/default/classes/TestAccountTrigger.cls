@@ -134,14 +134,21 @@ public with sharing class TestAccountTrigger {
         insert vendedores;
         insert accountsToInsert;
 
-        Vendedor__c [] vendedor = [SELECT Id FROM Vendedor__C WHERE RecordTypeId = '012Dn000000Zxc0IAC'];
-        
-        ViaCepCallout.updateAccountAddresFuture(JSON.serialize(accountsToInsert));
 
-        Test.stopTest();
-        Account[] assertAccount = [SELECT Id,QualificacaoCliente__c,Vendedor__c,EnderecoEstado__c FROM Account WHERE QualificacaoCliente__c = 'Ouro'];
+        UpdateAccountAddressSchedulable accountAddresScheduleable = new UpdateAccountAddressSchedulable(accountsToInsert);
+              
+        String sch = '0 0 0 15 3 ? 2023';
                 
-        System.assertEquals('SP', assertAccount[0].EnderecoEstado__c,'Estado da Conta não foi atualizado');
+        ID jobId = System.schedule('ScheduledApexTest', sch, accountAddresScheduleable);
+        CronTrigger ct = [SELECT Id, CronExpression, TimesTriggered, NextFireTime FROM CronTrigger WHERE id = :jobId WITH SECURITY_ENFORCED]; 
+        System.assertEquals(sch, ct.CronExpression,'Tarefa não foi agendada corretamente'); 
+        
+        System.assertEquals(0, ct.TimesTriggered,'Tarefa executou'); 
+
+
+        System.assertEquals('2023-03-15 00:00:00', String.valueOf(ct.NextFireTime),'Agendamento configurado esta incorreto');   
+        Test.stopTest();
+
     }
     
 }

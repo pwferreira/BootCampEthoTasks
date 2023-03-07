@@ -46,7 +46,7 @@ public with sharing class AccountService {
                 //Seconds Minutes Hours Day_of_month Month Day_of_week Optional_year
                 String sch = '0 0 0 ' + string.valueOf(schDate.day()) + ' ' + string.valueOf(schDate.month()) + ' ' +  '? ' + string.valueOf(schDate.year());
                 
-                ID jobId = System.schedule('Update Account Address' + string.valueOf(schDate), sch, accountAddresScheduleable);
+                ID jobId = System.schedule('Update Account Address' + string.valueOf(schDate) + string.valueOf(currentSchedule), sch, accountAddresScheduleable);
             }
             
         } catch (Exception exc) {
