@@ -1,4 +1,5 @@
 import { LightningElement,wire,track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAccountList from "@salesforce/apex/VendedoresPanelController.getAccountsByVendedor";
 
 export default class VendedoresPanel extends LightningElement {
@@ -45,11 +46,18 @@ export default class VendedoresPanel extends LightningElement {
       })
   }
 
-  handlerowselection(event){
-    const selectedData = event.detail.selectedRows;
-    console.log('selected data....' + selectedData);
-
-  }
+  handleRowSelection(event) {
+    const selectedRows = event.detail.selectedRows;
+    if (selectedRows.length === 1) {
+        const selectedRowData = selectedRows[0];
+        const toastEvent = new ShowToastEvent({
+            title: 'Selected Row',
+            message: `You selected row` + selectedRowData['Name'],
+            variant: 'success',
+        });
+        this.dispatchEvent(toastEvent);
+    }
+}
 
 }
 
