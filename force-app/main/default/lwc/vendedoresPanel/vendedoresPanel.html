@@ -1,19 +1,19 @@
 <template>
     <lightning-card title="Contas por Vendedores">
         
-    <lightning-tree-grid 
-                             key-field="Id"
+    <lightning-tree-grid     key-field="Id"
                              columns={gridColumns}
                              data={gridData}
-                             onrowselection={handleRowSelection}>
+                             onrowselection={handleRowSelection}
+                             disable-row={disableChildRows}>
     </lightning-tree-grid>
-    </lightning-card>
-    <lightning-card title="Mapa das Contas">
+    <template if:true={showMap}>
         <lightning-map 
             map-markers={mapMarkers} 
             center={center} 
             zoom-level={zoomLevel} 
             markers-title="Contas">
         </lightning-map>
+    </template>
     </lightning-card>
 </template>
