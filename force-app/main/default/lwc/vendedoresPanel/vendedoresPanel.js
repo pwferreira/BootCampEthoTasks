@@ -1,9 +1,18 @@
 import { LightningElement,wire,track } from 'lwc';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import getAccountList from "@salesforce/apex/VendedoresPanelController.getAccountsByVendedor";
+import getAccountList from "@salesforce/apex/VendedoresPanelController.getAllAccountsByVendedor";
+
 
 export default class VendedoresPanel extends LightningElement {
    
+  center = {location: { 
+    Latitude: '-22.4379162',
+    Longitude: '-46.9619559',
+  }};
+
+  zoomLevel = 10;
+  mapMarkers = [];
+  error;
+
   @track gridColumns = [
     {label : 'Nome' , fieldName : 'Name', type: 'text'},
     {label : 'Tipo' , fieldName : 'SalesPersonType', type: 'text', initialWidth: 120},
@@ -49,13 +58,21 @@ export default class VendedoresPanel extends LightningElement {
   handleRowSelection(event) {
     const selectedRows = event.detail.selectedRows;
     if (selectedRows.length === 1) {
-        const selectedRowData = selectedRows[0];
-        const toastEvent = new ShowToastEvent({
-            title: 'Selected Row',
-            message: `You selected row` + selectedRowData['Name'],
-            variant: 'success',
-        });
-        this.dispatchEvent(toastEvent);
+        const selectedRow = selectedRows[0];
+        console.log('selected row....' + JSON.stringify(selectedRow));
+
+        for(var i=0; i<temp.length ; i++){
+          var relatedAccount = temp[i]['Accounts__r'];
+          if(relatedAccount){
+           
+          }
+          else if (error) {
+            this.error = error;
+            this.mapMarkers = undefined;
+          }
+
+        }
+
     }
 }
 

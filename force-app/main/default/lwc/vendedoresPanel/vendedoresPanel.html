@@ -8,4 +8,12 @@
                              onrowselection={handleRowSelection}>
     </lightning-tree-grid>
     </lightning-card>
+    <lightning-card title="Mapa das Contas">
+        <lightning-map 
+            map-markers={mapMarkers} 
+            center={center} 
+            zoom-level={zoomLevel} 
+            markers-title="Contas">
+        </lightning-map>
+    </lightning-card>
 </template>
