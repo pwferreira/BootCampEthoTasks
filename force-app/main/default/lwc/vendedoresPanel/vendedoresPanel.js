@@ -1,4 +1,4 @@
-import { LightningElement,wire,track,api } from 'lwc';
+import { LightningElement,track } from 'lwc';
 import getAccountList from "@salesforce/apex/VendedoresPanelController.getAllAccountsByVendedor";
 
 
@@ -10,8 +10,7 @@ export default class VendedoresPanel extends LightningElement {
   mapMarkers = [];
   error;
   showMap = false;
-  @api disableChildRows; 
-
+  
   @track gridColumns = [
     {label : 'Nome' , fieldName : 'Name', type: 'text'},
     {label : 'Tipo' , fieldName : 'SalesPersonType', type: 'text', initialWidth: 120},
@@ -77,6 +76,8 @@ export default class VendedoresPanel extends LightningElement {
     if (selectedRows.length === 1){
       let mapMarkers =  [];
       let zoomLevel = 10;
+      let center = this.center;
+
 
       if(selectedRows[0]['level'] != 1){
         console.log('selectedRows[0]....' + JSON.stringify(selectedRows[0]));
@@ -93,6 +94,12 @@ export default class VendedoresPanel extends LightningElement {
           });
 
           zoomLevel = 15;
+          center = { location: {
+             Street: selectedRows[0]['EnderecoRua__c'],
+              City: selectedRows[0]['EnderecoCidade__c'],
+              State: selectedRows[0]['EnderecoEstado__c']
+          }
+        };
 
       }
       else{
@@ -114,6 +121,8 @@ export default class VendedoresPanel extends LightningElement {
       this.mapMarkers = mapMarkers;
       this.showMap = true;
       this.zoomLevel = zoomLevel;
+    }else{
+      this.showMap = false;
     }        
   }
     
